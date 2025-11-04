@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGODB_URI);
+// Use same env key as backend/.env: MongoDB_URI
+mongoose.connect(process.env.MONGO_URI);
 
 const seats = [];
 let number = 1;

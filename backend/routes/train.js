@@ -36,17 +36,17 @@ trainRouter.post("/", async (req, res) => {
     // Extract user ID from request headers
     const userId = req.headers["user-id"];
 
-    // Check if the user exists based on the extracted ID
-    if (userId !== null || userId !== undefined) {
-      const user = await Users.findById(userId);
-      if (!user) {
-        return res
-          .status(404)
-          .json({ status: "error", message: "Please login first" });
-      }
-    } else {
+    // Validate userId: it must be present and point to an existing user
+    if (!userId) {
       return res
-        .status(404)
+        .status(401)
+        .json({ status: "error", message: "Please login first" });
+    }
+
+    const user = await Users.findById(userId);
+    if (!user) {
+      return res
+        .status(401)
         .json({ status: "error", message: "Please login first" });
     }
 
@@ -80,17 +80,12 @@ trainRouter.post("/", async (req, res) => {
         .json({ status: "info", message: "No seats available" });
     }
 
-    // Mark the available seats as booked
+    // Mark the available seats as booked (in-memory)
     markSeatsAsBooked(train, availableSeats);
 
-    // Create a new booking with the booked seat numbers
-    const newBooking = new Train({
-      coach: { seats: train.coach.seats },
-      bookings: [{ seats: availableSeats }],
-    });
-
-    // Save the new booking to the database
-    await newBooking.save();
+    // Add booking to existing train document and save
+    train.bookings.push({ seats: availableSeats });
+    await train.save();
 
     // Send the booked seat numbers to the client
     res.status(200).json({ status: "success", seats: availableSeats });
@@ -108,8 +103,10 @@ function markSeatsAsBooked(train, bookedSeats) {
       seats[i].isBooked = true;
     }
   }
+  // markModified so mongoose notices the nested change
   train.markModified("coach.seats");
-  return train.save();
+  // Do not persist here; caller will save once after pushing booking
+  return;
 }
 
 // Helper function to find the available seats for a requested number of seats

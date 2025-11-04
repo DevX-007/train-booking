@@ -96,14 +96,7 @@ const Main = () => {
           <h2 className="text-2xl text-[#ee5e5f] font-bold mb-14 pb-2 border-b border-[#eca74e4f] flex flex-col md:flex-row md:items-center md:justify-center">
             <span>Train Booking System by </span>
             <span className="md:ml-2">
-              <a
-                href="https://vaibhaw.netlify.app"
-                target="_blank"
-                className="text-[#eca74e] hover:text-[#149ddd] duration-500"
-                rel="noreferrer"
-              >
-                Vaibhaw Mishra
-              </a>
+              Himansahu Yadav
             </span>
           </h2>
 

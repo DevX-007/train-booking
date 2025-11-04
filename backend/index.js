@@ -25,7 +25,8 @@ app.use(express.json());
 // Using CORS
 app.use(
   cors({
-    origin: [process.env.API_URL, "http://localhost:3000"],
+    origin: ["http://localhost:3000"],
+    credentials: true,
   })
 );
 
@@ -41,7 +42,7 @@ app.use(cookieParser()); // parsing cookies
 
 // Connect to the MongoDB database
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("[DB] Connection Success");
   })
